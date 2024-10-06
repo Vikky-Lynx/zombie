@@ -59,6 +59,7 @@
             background-position: center;
             box-shadow: 0 0 50px 30px rgba(0, 0, 0, 0.5);
             cursor: url("images/aim.svg"), pointer;
+            overflow: hidden; /* Это важный момент — элементы не выйдут за пределы контейнера */
         }
 
 
@@ -143,6 +144,23 @@
             }
         }
 
+             /* Сообщения об успешном завершении игры и провале */
+            #congratulations,
+            #failure {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: white;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 10;
+        }
+
     </style>
 </head>
 
@@ -161,6 +179,10 @@
             </div>
         </div>
     </div>
+
+    <div id="congratulations">You did it! You were able to stop the zombie apocalypse!</div>
+    <div id="failure">You have failed the mission. The zombies are attacking in full force. Try to prevent it while you can!</div>
+
     <div class="container">
         <div class="item"></div>
         <div class="item"></div>
@@ -186,6 +208,10 @@
         let hit = true
         let isStarted = false
         let interval;
+        let shotCount = 0; // Счётчик выстрелов
+        const maxShots = 50; // Максимум выстрелов
+        const requiredHits = 40; // Требуемое количество попаданий для победы
+        let hitCount = 0; // Счётчик попаданий
 
         function getRandomIndex(array) {
             return Math.floor(Math.random() * array.length)
@@ -196,6 +222,8 @@
 
         const zombieImg = document.createElement("img")
         zombieImg.src = "images/zombie1.png.webp"
+        zombieImg.style.maxWidth = '100%'; /* Ограничиваем размер изображения */
+        zombieImg.style.maxHeight = '100%'; /* Ограничиваем размер изображения */
 
         const song = document.getElementById("sound-song")
         const soundBtn = document.getElementById("sound-btn")
@@ -228,15 +256,23 @@
             zombieImg.remove()
             items[randomIndex].append(hitImg)
 
-            hitCounter.innerText++
-        }
+            hitCounter.innerText++;
+            hitCount++; // Увеличиваем счётчик попаданий
+            shotCount++; // Увеличиваем счётчик выстрелов
+             // Проверяем, достигнут ли лимит выстрелов
+            if (shotCount >= maxShots) {
+                endGame();
+            }
+        };
 
         startBtn.onclick = function () {
             if (!isStarted) {
                 // запустить
-                isStarted = true
-                playGame()
-                startBtn.innerText = "STOP"
+                isStarted = true;
+                shotCount = 0; // Сбросить счётчик выстрелов при старте игры
+                hitCount = 0; // Сбросить счётчик попаданий при старте игры
+                playGame();
+                startBtn.innerText = "STOP";
 
             } else {
                 // остановить
@@ -279,7 +315,22 @@
                 hitImg.remove()
             }, 1500)
         }
+            
+            // Функция завершения игры
+        function endGame() {
+            clearInterval(interval); // Остановить игру
+            zombieImg.remove(); // Удалить зомби с экрана
 
+            if (hitCount >= requiredHits) {
+                congratulations.style.display = 'block'; // Показать поздравление
+            } else {
+                failure.style.display = 'block'; // Показать сообщение о поражении
+            }
+
+            startBtn.innerText = "START";
+            isStarted = false;
+        }
+        
     </script>
 </body>
 
