@@ -4,194 +4,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <title>Zombie</title>
     <style>
+
         body {
-            touch-action: none; /* Отключение жестов браузера */
-            overscroll-behavior: none; /* Отключение эффекта скроллинга */
+
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             background-color: rgba(53, 2, 2, 0.981);
-            padding: 30px;
             font-family: Arial, Helvetica, sans-serif;
             margin: 0;
             padding: 0;
             height: 100vh;
             width: 100vw;
-        }
-
-        @media (max-width: 600px) {
-            body {
-                font-size: 14px;
-            }
-        }
-
-        button {
-            width: 135px;
-            padding: 10px 25px;
-            background-color: rgba(53, 2, 2, 0.981);
-            border: 2px solid white;
-            border-radius: 5px;
-            color: white
-        }
-
-        .game-panel {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            color: white;
-            width: 100%;
-            max-width: 800px;
-            border: 2px solid white;
-            /* Рамка для отображения границ элементов */
-        }
-
-        :root {
-        --vh: 100vh; /* Изначальная высота экрана */
-        }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            width: 100vw;
-            height: calc(var(--vh, 1vh) * 100);
-            border-radius: 10px;
-            margin: 50px auto;
-            background-image: url("images/wall1.jpg");
-            background-size: cover; /* Или contain, в зависимости от желаемого результата */
-            background-position: center; /* Центрируем изображение */
-            background-repeat: no-repeat; /* Отключаем дублирование */
-            box-shadow: 0 0 50px 30px rgba(0, 0, 0, 0.5);
-            cursor: url("images/aim.svg"), pointer;
             overflow: hidden;
-
-
-        .item {
-            box-sizing: border-box;
-            /* Учитывать padding и border в расчетах ширины */
-
-            width: 120px;
-            height: 120px;
-            margin: 10px 20px;
-            /* border-radius: 50%; */
-            /* border: 2px solid white; */
-            /* Рамка для отображения границ элементов */
         }
 
-        img {
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Стиль для мобильных устройств в портретной ориентации */
-        @media (max-width: 900px) and (orientation: portrait) {
-            .game-panel, .container {
-                display: none; /* Прячем игру в портретной ориентации */
-            }
-
+        /* Для мобильных устройств в горизонтальном режиме */
+        @media (orientation: landscape) and (max-width: 900px) {
             body {
                 font-size: 16px;
-                text-align: center;
-                background-color: rgba(53, 2, 2, 0.981);
-            }
-
-            body::before {
-                content: 'Поверните устройство в горизонтальное положение для начала игры';
-                color: white;
-                font-size: 20px;
-                margin: auto;
-            }
-        }
-
-          /* Стиль для мобильных устройств в горизонтальной ориентации */
-            @media (max-width: 900px) and (orientation: landscape) {
-                .container {
-                height: calc(var(--vh, 1vh) * 100);
+                padding: 0;
+                height: 100vh;
                 width: 100vw;
-                overflow: hidden;
-                background-size: cover;
-                background-position: center;
-                display: flex;
-                flex-wrap: wrap;
-            }
-
-            .item {
-                width: 15vw;
-                height: 15vw;
-                margin: 5px;
-            }
-
-            button {
-                width: 100px;
-                padding: 5px 10px;
             }
 
             .game-panel {
-                width: 100vw;
+                flex-direction: row;
+                justify-content: space-around;
+                width: 100%;
                 padding: 10px;
-                box-sizing: border-box;
             }
-        }
 
-        @media (min-width: 600px) and (max-width: 1024px) and (orientation: landscape) {
             .container {
-                height: 100vh;
-                width: 100vw;
-                background-size: contain;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                height: 80%;
+                margin: 0;
+                background-size: cover;
                 background-position: center;
-                border-radius: 0;
-                background-repeat: no-repeat; /* Отключаем дублирование */
+                border: none;
             }
 
             .item {
                 width: 12vw;
                 height: 12vw;
+                margin: 5px;
+            }
+
+            button {
+                width: 135px;
+                padding: 10px 25px;
+                background-color: rgba(53, 2, 2, 0.981);
+                border: 2px solid white;
+                border-radius: 5px;
+                color: white;
             }
         }
 
-             /* Сообщения об успешном завершении игры и провале */
-            #congratulations,
-            #failure {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-            color: white;
-            text-align: center;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            z-index: 10;
-        }
+        /* Для планшетов и больших экранов */
+        @media (min-width: 900px) {
+            body {
+                padding: 30px;
+            }
 
+            .game-panel {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px;
+                color: white;
+                border: 2px solid white;
+                width: 800px;
+            }
+
+            .container {
+                display: flex;
+                flex-wrap: wrap;
+                width: 800px;
+                border-radius: 10px;
+                margin: 50px auto;
+                background-image: url("images/wall1.jpg");
+                background-size: cover;
+                background-position-y: -255px;
+                box-shadow: 0 0 50px 30px rgba(0, 0, 0, 0.5);
+                cursor: url("images/aim.svg"), pointer;
+            }
+
+            .item {
+                box-sizing: border-box;
+                width: 120px;
+                height: 120px;
+                margin: 10px 20px;
+            }
+
+            img {
+                width: 100%;
+                height: 100%;
+            }
+        }
     </style>
 </head>
 
-<body> 
+<body>
     <div class="game-panel">
         <div>
             <button id="sound-btn">SOUND ON</button>
             <button id="start-btn">START</button>
         </div>
         <div>
-            <div class="counter">HITS:
-                <span id="hit-counter">0</span>
-            </div>
-            <div class="counter">MISS:
-                <span id="miss-counter">0</span>
-            </div>
+            <div class="counter">HITS: <span id="hit-counter">0</span></div>
+            <div class="counter">MISS: <span id="miss-counter">0</span></div>
         </div>
     </div>
-
-    <div id="congratulations">You did it! You were able to stop the zombie apocalypse!</div>
-    <div id="failure">You have failed the mission. The zombies are attacking in full force. Try to prevent it while you can!</div>
 
     <div class="container">
         <div class="item"></div>
@@ -210,179 +140,95 @@
         <div class="item"></div>
         <div class="item"></div>
     </div>
+
     <audio id="sound-song" src="sounds/song.mp3" loop></audio>
     <audio id="sound-shot" src="sounds/shot.mp3"></audio>
 
     <script>
         let randomIndex;
-        let hit = true
-        let isStarted = false
+        let hit = true;
+        let isStarted = false;
         let interval;
-        let shotCount = 0; // Счётчик выстрелов
-        const maxShots = 50; // Максимум выстрелов
-        const requiredHits = 40; // Требуемое количество попаданий для победы
-        let hitCount = 0; // Счётчик попаданий
-
-        function openFullscreen() {
-    let elem = document.documentElement;
-
-    // Проверка и поддержка всех возможных вариантов вызова для различных браузеров
-    if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-    } else if (elem.mozRequestFullScreen) { // Firefox
-        elem.mozRequestFullScreen();
-    } else if (elem.webkitRequestFullscreen) { // Chrome, Safari, Opera
-        elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) { // IE/Edge
-        elem.msRequestFullscreen();
-    }
-}
 
         function getRandomIndex(array) {
-            return Math.floor(Math.random() * array.length)
+            return Math.floor(Math.random() * array.length);
         }
 
-        const items = document.querySelectorAll(".item")
-        const missCounter = document.getElementById("miss-counter")
+        const items = document.querySelectorAll(".item");
+        const missCounter = document.getElementById("miss-counter");
 
-        const zombieImg = document.createElement("img")
-        zombieImg.src = "images/zombie1.png.webp"
-        zombieImg.style.maxWidth = '100%'; /* Ограничиваем размер изображения */
-        zombieImg.style.maxHeight = '100%'; /* Ограничиваем размер изображения */
+        const zombieImg = document.createElement("img");
+        zombieImg.src = "images/zombie1.png.webp";
 
-        const song = document.getElementById("sound-song")
-        const soundBtn = document.getElementById("sound-btn")
+        const song = document.getElementById("sound-song");
+        const soundBtn = document.getElementById("sound-btn");
 
-        const startBtn = document.getElementById("start-btn")
+        const startBtn = document.getElementById("start-btn");
 
-        const hitImg = document.createElement("img")
-        hitImg.src = "images/blood.png"
+        const hitImg = document.createElement("img");
+        hitImg.src = "images/blood.png";
 
-        const shot = document.getElementById("sound-shot")
+        const shot = document.getElementById("sound-shot");
 
-        const hitCounter = document.getElementById("hit-counter")
+        const hitCounter = document.getElementById("hit-counter");
 
         soundBtn.onclick = function () {
             if (song.currentTime) {
-                song.pause()
-                song.currentTime = 0
-                soundBtn.innerHTML = "SOUND ON"
+                song.pause();
+                song.currentTime = 0;
+                soundBtn.innerHTML = "SOUND ON";
             } else {
-                song.play()
-                soundBtn.innerHTML = "SOUND OFF"
-            }
-        }
-
-        zombieImg.onclick = function () {
-            hit = true
-            shot.currentTime = 0
-            shot.play()
-
-            zombieImg.remove()
-            items[randomIndex].append(hitImg)
-
-            hitCounter.innerText++;
-            hitCount++; // Увеличиваем счётчик попаданий
-            shotCount++; // Увеличиваем счётчик выстрелов
-             // Проверяем, достигнут ли лимит выстрелов
-            if (shotCount >= maxShots) {
-                endGame();
+                song.play();
+                soundBtn.innerHTML = "SOUND OFF";
             }
         };
 
+        zombieImg.onclick = handleHit;
+        zombieImg.ontouchend = handleHit;
+
+        function handleHit() {
+            hit = true;
+            shot.currentTime = 0;
+            shot.play();
+
+            zombieImg.remove();
+            items[randomIndex].append(hitImg);
+
+            hitCounter.innerText++;
+        }
+
         startBtn.onclick = function () {
             if (!isStarted) {
-              // Включение полноэкранного режима при старте игры
-            openFullscreen();  
-                // Запуск игры и включение полноэкранного режима
-            if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-            }
-                // запустить
                 isStarted = true;
-                shotCount = 0; // Сбросить счётчик выстрелов при старте игры
-                hitCount = 0; // Сбросить счётчик попаданий при старте игры
                 playGame();
                 startBtn.innerText = "STOP";
-
             } else {
-                 // Остановка игры и выход из полноэкранного режима
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.mozCancelFullScreen) { // Firefox
-                    document.mozCancelFullScreen();
-                } else if (document.webkitExitFullscreen) { // Chrome, Safari и Opera
-                    document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) { // IE/Edge
-                    document.msExitFullscreen();
-                }
-                // остановить
-                isStarted = false
-                clearInterval(interval)
-                startBtn.innerText = "START"
-                hitCounter.innerText = 0
-                missCounter.innerText = 0
-                zombieImg.remove()
-                hitImg.remove()
+                isStarted = false;
+                clearInterval(interval);
+                startBtn.innerText = "START";
+                hitCounter.innerText = 0;
+                missCounter.innerText = 0;
+                zombieImg.remove();
+                hitImg.remove();
             }
-        }
+        };
 
-        function handleInteraction(event) {
-            //Interaction handling
-        }
-
-        element.addEventListener('click', handleInteraction);
-        element.addEventListener('touchend', handleInteraction);
-
-        element.addEventListener('touchstart', function(event) {
-            const touch = event.toushes[0]; //first touch
-            const x = touch.clientX;
-            const y = touch.clientY;
-            //processing code
-        });
-        //game
         function playGame() {
-            randomIndex = getRandomIndex(items)
-            items[randomIndex].append(zombieImg)
+            randomIndex = getRandomIndex(items);
+            items[randomIndex].append(zombieImg);
 
             interval = setInterval(function () {
                 if (hit) {
-                    hit = false
+                    hit = false;
                 } else {
-                    missCounter.innerText++
+                    missCounter.innerText++;
                 }
-                randomIndex = getRandomIndex(items)
-                items[randomIndex].append(zombieImg)
-                hitImg.remove()
-            }, 1500)
+                randomIndex = getRandomIndex(items);
+                items[randomIndex].append(zombieImg);
+                hitImg.remove();
+            }, 1500);
         }
-            
-            // Функция завершения игры
-        function endGame() {
-            clearInterval(interval); // Остановить игру
-            zombieImg.remove(); // Удалить зомби с экрана
 
-            if (hitCount >= requiredHits) {
-                congratulations.style.display = 'block'; // Показать поздравление
-            } else {
-                failure.style.display = 'block'; // Показать сообщение о поражении
-            }
-
-            startBtn.innerText = "START";
-            isStarted = false;
-        }
-        
-        window.addEventListener('resize', () => {
-        // Обновляем vh при изменении размера окна
-        let vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
-        });
-
-        // Устанавливаем начальное значение vh при загрузке
-        document.addEventListener('DOMContentLoaded', () => {
-        let vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
-        });
 
     </script>
 </body>
