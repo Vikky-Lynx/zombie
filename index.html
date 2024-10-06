@@ -56,20 +56,19 @@
         }
 
         .container {
-            background-size: contain;
             display: flex;
             flex-wrap: wrap;
-            width: 800px;
-            height: 600px;
+            width: 100vw;
+            height: calc(var(--vh, 1vh) * 100);
             border-radius: 10px;
             margin: 50px auto;
             background-image: url("images/wall1.jpg");
-            background-size: cover;
-            background-position: center;
+            background-size: cover; /* Или contain, в зависимости от желаемого результата */
+            background-position: center; /* Центрируем изображение */
+            background-repeat: no-repeat; /* Отключаем дублирование */
             box-shadow: 0 0 50px 30px rgba(0, 0, 0, 0.5);
             cursor: url("images/aim.svg"), pointer;
-            overflow: hidden; /* Это важный момент — элементы не выйдут за пределы контейнера */
-        }
+            overflow: hidden;
 
 
         .item {
@@ -143,7 +142,6 @@
             .container {
                 height: 100vh;
                 width: 100vw;
-                height: 80vh;
                 background-size: contain;
                 background-position: center;
                 border-radius: 0;
