@@ -2,11 +2,15 @@
 <html lang="en">
 
 <head>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zombie</title>
     <style>
         body {
+            touch-action: none; /* Отключение жестов браузера */
+            overscroll-behavior: none; /* Отключение эффекта скроллинга */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -213,6 +217,21 @@
         const requiredHits = 40; // Требуемое количество попаданий для победы
         let hitCount = 0; // Счётчик попаданий
 
+        function openFullscreen() {
+    let elem = document.documentElement;
+
+    // Проверка и поддержка всех возможных вариантов вызова для различных браузеров
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+    } else if (elem.mozRequestFullScreen) { // Firefox
+        elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) { // Chrome, Safari, Opera
+        elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { // IE/Edge
+        elem.msRequestFullscreen();
+    }
+}
+
         function getRandomIndex(array) {
             return Math.floor(Math.random() * array.length)
         }
@@ -267,6 +286,8 @@
 
         startBtn.onclick = function () {
             if (!isStarted) {
+              // Включение полноэкранного режима при старте игры
+            openFullscreen();  
                 // Запуск игры и включение полноэкранного режима
             if (document.documentElement.requestFullscreen) {
             document.documentElement.requestFullscreen();
@@ -282,6 +303,12 @@
                  // Остановка игры и выход из полноэкранного режима
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) { // Firefox
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) { // Chrome, Safari и Opera
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { // IE/Edge
+                    document.msExitFullscreen();
                 }
                 // остановить
                 isStarted = false
