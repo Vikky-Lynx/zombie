@@ -6,6 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zombie</title>
     <style>
+        
+        @media (max-width: 600px) {
+            body {
+                font-size: 14px;
+            }
+        }
+
         body {
             display: flex;
             flex-direction: column;
@@ -171,7 +178,19 @@
             }
         }
 
+        function handleInteraction(event) {
+            //Interaction handling
+        }
 
+        element.addEventListener('click', handleInteraction);
+        element.addEventListener('touchend', handleInteraction);
+
+        element.addEventListener('touchstart', function(event) {
+            const touch = event.toushes[0]; //first touch
+            const x = touch.clientX;
+            const y = touch.clientY;
+            //processing code
+        });
         //game
         function playGame() {
             randomIndex = getRandomIndex(items)
