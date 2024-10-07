@@ -4,9 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Zombie</title>
     <style>
         body {
+            touch-action: none; /* Отключение жестов браузера */
+            overscroll-behavior: none; /* Отключение эффекта скроллинга */
+            overflow-y: auto; /* Включить вертикальный скроллинг */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -41,6 +46,8 @@
         }
 
         .container {
+            max-height: 100vh; /* Ограничить высоту контейнера размером экрана */
+            overflow-y: auto; /* Добавить скролл внутри контейнера, если он слишком большой */
             display: flex;
             flex-wrap: wrap;
             width: 800px;
@@ -51,6 +58,7 @@
             background-position-y: -255px;
             box-shadow: 0 0 50px 30px rgba(0, 0, 0, 0.5);
             cursor: url("images/aim.svg"), pointer;
+            overflow: hidden;
         }
 
         .item {
@@ -83,13 +91,24 @@
             }
 
             body::before {
-                content: 'Поверните устройство в горизонтальное положение для начала игры';
-                color: white;
-                font-size: 20px;
-                margin: auto;
-            }
+        content: "Please rotate your device to landscape mode for a better experience";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        font-size: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+        text-align: center;
+        padding: 10px;
+    }
         }
-        
+
         /* Для мобильных устройств в горизонтальном режиме */
         @media (orientation: landscape) and (max-width: 900px) {
         body {
@@ -115,7 +134,8 @@
             margin: 0;
             background-size: cover;
             background-position: center;
-            border: none;
+            border-radius: 0;
+            overflow: hidden;
     }
 
     .item {
@@ -158,6 +178,7 @@
                 background-position-y: -255px;
                 box-shadow: 0 0 50px 30px rgba(0, 0, 0, 0.5);
                 cursor: url("images/aim.svg"), pointer;
+                overflow: hidden;
             }
 
             .item {
@@ -171,6 +192,23 @@
                 width: 100%;
                 height: 100%;
             }
+        }
+
+         /* Сообщение об успешном завершении игры */
+            #congratulations,
+            #failure {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: white;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 10;
         }
 
     </style>
@@ -191,6 +229,8 @@
             </div>
         </div>
     </div>
+    <div id="congratulations">You did it, Hero! You were able to stop the zombie apocalypse! And saved the kitten!</div>
+    <div id="failure">You have failed the mission. The zombies are attacking in full force. Try to prevent it while you can!</div>
     <div class="container">
         <div class="item"></div>
         <div class="item"></div>
@@ -216,6 +256,11 @@
         let hit = true
         let isStarted = false
         let interval;
+        let shotCount = 0; // Счётчик выстрелов
+        const maxShots = 25; // Максимум выстрелов для победы
+        const requiredHits = 22; // Требуемое количество попаданий для победы
+        let hitCount = 0; // Счётчик попаданий
+        let missCount = 0; // Счётчик промахов
 
         function getRandomIndex(array) {
             return Math.floor(Math.random() * array.length)
@@ -226,6 +271,9 @@
 
         const zombieImg = document.createElement("img")
         zombieImg.src = "images/zombie1.png.webp"
+
+        const kittenImg = document.createElement("img")
+        kittenImg.src = "images/kitten.png..webp"
 
         const song = document.getElementById("sound-song")
         const soundBtn = document.getElementById("sound-btn")
@@ -262,49 +310,137 @@
             items[randomIndex].append(hitImg)
 
             hitCounter.innerText++
-        }
-
-        startBtn.onclick = function () {
-            if (!isStarted) {
-                // запустить
-                isStarted = true
-                playGame()
-                startBtn.innerText = "STOP"
-
-            } else {
-                // остановить
-                isStarted = false
-                clearInterval(interval)
-                startBtn.innerText = "START"
-                hitCounter.innerText = 0
-                missCounter.innerText = 0
-                zombieImg.remove()
-                hitImg.remove()
+            hitCount++; // Увеличиваем счётчик попаданий
+            shotCount++; // Увеличиваем счётчик выстрелов
+            if (shotCount >= maxShots) {
+                endGame();
             }
         }
 
+        kittenImg.onclick = handleMiss;
+        kittenImg.ontouchend = handleMiss;
+
+        // Обработчик для выстрела по котенку (считается промахом)
+
+        function handleMiss() {
+        shot.currentTime = 0;
+        shot.play();
+        missCounter.innerText++; // Увеличиваем счётчик промахов
+        missCount++; // Увеличиваем счётчик промахов
+        shotCount++; // Увеличиваем счётчик выстрелов
+        kittenImg.remove(); // Удаляем котенка
+        // Проверяем окончание игры после каждого выстрела
+        if (shotCount >= maxShots) {
+        endGame(); // Завершаем игру
+    }
+    }
+
+    
+        startBtn.onclick = function () {
+    if (!isStarted) {
+        // Включение полноэкранного режима при старте игры
+        openFullscreen();
+
+        isStarted = true;
+        playGame(); // Запускаем игру
+        startBtn.innerText = "STOP";
+    } else {
+        // Выход из полноэкранного режима и остановка игры
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) { // Firefox
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) { // Chrome, Safari и Opera
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { // IE/Edge
+            document.msExitFullscreen();
+        }
+        isStarted = false;
+        clearInterval(interval); // Остановка игры
+        startBtn.innerText = "START";
+        hitCounter.innerText = 0;
+        missCounter.innerText = 0;
+        zombieImg.remove();
+        hitImg.remove();
+    }
+}
 
         //game
+
         function playGame() {
             randomIndex = getRandomIndex(items)
-            items[randomIndex].append(zombieImg)
 
-            interval = setInterval(function () {
-                if (hit) {
-                    hit = false
-                } else {
-                    missCounter.innerText++
-                }
-                randomIndex = getRandomIndex(items)
-                items[randomIndex].append(zombieImg)
-                hitImg.remove()
-            }, 1500)
+        // Случайно выбираем, кто появится — зомби или котенок
+        let randomCharacter = Math.random() < 0.5 ? zombieImg : kittenImg;
+        items[randomIndex].append(randomCharacter); // Появляется либо зомби, либо котенок
+        // Привязываем обработчики событий
+        if (randomCharacter === zombieImg) {
+        zombieImg.onclick = handleHit; // Попадание по зомби
+        items[randomIndex].append(zombieImg); // Добавляем зомби на экран
+        } else {
+        kittenImg.onclick = handleMiss; // Выстрел по котенку — это промах
+        items[randomIndex].append(kittenImg); // Добавляем котенка на экран
         }
 
+        interval = setInterval (function () {
+            if (!hit) {
+        hit = false;
+        } //else {
+        //missCounter.innerText++;
+        //missCount++; // Увеличиваем счётчик промахов
+        //shotCount++; // Увеличиваем счётчик выстрелов
+        //}
+        randomIndex = getRandomIndex(items);
+        // Снова случайный выбор между зомби и котенком
+        randomCharacter = Math.random() < 0.5 ? zombieImg : kittenImg;
+        // Добавляем нового персонажа на экран
+        if (randomCharacter === zombieImg) {
+            items[randomIndex].append(zombieImg);
+        } else {
+            items[randomIndex].append(kittenImg);
+        }
 
+        //items[randomIndex].append(randomCharacter);
 
+        hitImg.remove(); // Убираем следы предыдущего попадания
+        // Проверяем окончание игры после каждого появления нового персонажа
+        if (shotCount >= maxShots) {
+            endGame(); // Завершаем игру
+            }
+        }, 1500);
+    }
 
+        // Функция завершения игры
 
+        function endGame() {
+            clearInterval(interval); // Остановить игру
+            zombieImg.remove(); // Удалить зомби с экрана
+            kittenImg.remove(); // Удалить котенка с экрана
+
+            if (hitCount >= requiredHits) {
+                congratulations.style.display = 'block'; // Показать поздравление
+            } else {
+                failure.style.display = 'block'; // Показать сообщение о поражении
+            }
+
+            startBtn.innerText = "START";
+            isStarted = false;
+        }
+
+        function openFullscreen() {
+    let elem = document.documentElement;
+
+    // Проверка и поддержка всех возможных вариантов вызова для различных браузеров
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+    } else if (elem.mozRequestFullScreen) { // Firefox
+        elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) { // Chrome, Safari, Opera
+        elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { // IE/Edge
+        elem.msRequestFullscreen();
+    }
+}
 
 
     </script>
